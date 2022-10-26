@@ -6,6 +6,7 @@
     "epoch_period",
     "fee_config",
     "owner",
+    "reward_coins",
     "stake_token",
     "unbond_period",
     "validators"
@@ -35,6 +36,13 @@
     "owner": {
       "description": "Account who can call certain privileged functions",
       "type": "string"
+    },
+    "reward_coins": {
+      "description": "Contains all coins that are being tracked",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "stake_token": {
       "description": "Address of the Stake token",

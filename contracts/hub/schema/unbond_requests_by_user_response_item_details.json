@@ -2,7 +2,11 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "UnbondRequestsByUserResponseItemDetails",
   "type": "object",
-  "required": ["id", "shares", "state"],
+  "required": [
+    "id",
+    "shares",
+    "state"
+  ],
   "properties": {
     "batch": {
       "anyOf": [
@@ -89,7 +93,11 @@
     },
     "PendingBatch": {
       "type": "object",
-      "required": ["est_unbond_start_time", "id", "ustake_to_burn"],
+      "required": [
+        "est_unbond_start_time",
+        "id",
+        "ustake_to_burn"
+      ],
       "properties": {
         "est_unbond_start_time": {
           "description": "Estimated time when this batch will be submitted for unbonding",

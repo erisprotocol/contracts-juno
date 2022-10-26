@@ -5,8 +5,8 @@
   "required": [
     "available",
     "exchange_rate",
-    "total_utoken",
     "total_ustake",
+    "total_utoken",
     "tvl_utoken",
     "unbonding",
     "unlocked_coins"
@@ -23,16 +23,16 @@
         }
       ]
     },
-    "total_utoken": {
-      "description": "Total amount of utoken staked (bonded)",
+    "total_ustake": {
+      "description": "Total supply to the Stake token",
       "allOf": [
         {
           "$ref": "#/definitions/Uint128"
         }
       ]
     },
-    "total_ustake": {
-      "description": "Total supply to the Stake token",
+    "total_utoken": {
+      "description": "Total amount of utoken staked (bonded)",
       "allOf": [
         {
           "$ref": "#/definitions/Uint128"
@@ -56,7 +56,10 @@
   "definitions": {
     "Coin": {
       "type": "object",
-      "required": ["amount", "denom"],
+      "required": [
+        "amount",
+        "denom"
+      ],
       "properties": {
         "amount": {
           "$ref": "#/definitions/Uint128"

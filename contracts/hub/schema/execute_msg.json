@@ -5,7 +5,9 @@
     {
       "description": "Implements the Cw20 receiver interface",
       "type": "object",
-      "required": ["receive"],
+      "required": [
+        "receive"
+      ],
       "properties": {
         "receive": {
           "$ref": "#/definitions/Cw20ReceiveMsg"
@@ -16,13 +18,18 @@
     {
       "description": "Bond specified amount of Token",
       "type": "object",
-      "required": ["bond"],
+      "required": [
+        "bond"
+      ],
       "properties": {
         "bond": {
           "type": "object",
           "properties": {
             "receiver": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         }
@@ -32,7 +39,9 @@
     {
       "description": "Donates specified amount of Token to pool",
       "type": "object",
-      "required": ["donate"],
+      "required": [
+        "donate"
+      ],
       "properties": {
         "donate": {
           "type": "object"
@@ -43,13 +52,18 @@
     {
       "description": "Withdraw Token that have finished unbonding in previous batches",
       "type": "object",
-      "required": ["withdraw_unbonded"],
+      "required": [
+        "withdraw_unbonded"
+      ],
       "properties": {
         "withdraw_unbonded": {
           "type": "object",
           "properties": {
             "receiver": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         }
@@ -59,11 +73,15 @@
     {
       "description": "Add a validator to the whitelist; callable by the owner",
       "type": "object",
-      "required": ["add_validator"],
+      "required": [
+        "add_validator"
+      ],
       "properties": {
         "add_validator": {
           "type": "object",
-          "required": ["validator"],
+          "required": [
+            "validator"
+          ],
           "properties": {
             "validator": {
               "type": "string"
@@ -76,11 +94,15 @@
     {
       "description": "Remove a validator from the whitelist; callable by the owner",
       "type": "object",
-      "required": ["remove_validator"],
+      "required": [
+        "remove_validator"
+      ],
       "properties": {
         "remove_validator": {
           "type": "object",
-          "required": ["validator"],
+          "required": [
+            "validator"
+          ],
           "properties": {
             "validator": {
               "type": "string"
@@ -93,11 +115,15 @@
     {
       "description": "Transfer ownership to another account; will not take effect unless the new owner accepts",
       "type": "object",
-      "required": ["transfer_ownership"],
+      "required": [
+        "transfer_ownership"
+      ],
       "properties": {
         "transfer_ownership": {
           "type": "object",
-          "required": ["new_owner"],
+          "required": [
+            "new_owner"
+          ],
           "properties": {
             "new_owner": {
               "type": "string"
@@ -110,7 +136,9 @@
     {
       "description": "Accept an ownership transfer",
       "type": "object",
-      "required": ["accept_ownership"],
+      "required": [
+        "accept_ownership"
+      ],
       "properties": {
         "accept_ownership": {
           "type": "object"
@@ -121,7 +149,9 @@
     {
       "description": "Claim staking rewards, swap all for Token, and restake",
       "type": "object",
-      "required": ["harvest"],
+      "required": [
+        "harvest"
+      ],
       "properties": {
         "harvest": {
           "type": "object"
@@ -132,7 +162,9 @@
     {
       "description": "Use redelegations to balance the amounts of Token delegated to validators",
       "type": "object",
-      "required": ["rebalance"],
+      "required": [
+        "rebalance"
+      ],
       "properties": {
         "rebalance": {
           "type": "object"
@@ -143,7 +175,9 @@
     {
       "description": "Update Token amounts in unbonding batches to reflect any slashing or rounding errors",
       "type": "object",
-      "required": ["reconcile"],
+      "required": [
+        "reconcile"
+      ],
       "properties": {
         "reconcile": {
           "type": "object"
@@ -154,7 +188,9 @@
     {
       "description": "Submit the current pending batch of unbonding requests to be unbonded",
       "type": "object",
-      "required": ["submit_batch"],
+      "required": [
+        "submit_batch"
+      ],
       "properties": {
         "submit_batch": {
           "type": "object"
@@ -165,7 +201,9 @@
     {
       "description": "Callbacks; can only be invoked by the contract itself",
       "type": "object",
-      "required": ["callback"],
+      "required": [
+        "callback"
+      ],
       "properties": {
         "callback": {
           "$ref": "#/definitions/CallbackMsg"
@@ -176,14 +214,19 @@
     {
       "description": "Updates the fee config,",
       "type": "object",
-      "required": ["update_config"],
+      "required": [
+        "update_config"
+      ],
       "properties": {
         "update_config": {
           "type": "object",
           "properties": {
             "protocol_fee_contract": {
               "description": "Contract address where fees are sent",
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "protocol_reward_fee": {
               "description": "Fees that are being applied during reinvest of staking rewards",
@@ -195,6 +238,16 @@
                   "type": "null"
                 }
               ]
+            },
+            "reward_coins": {
+              "description": "Reward coins that should be tracked",
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
             }
           }
         }
@@ -212,20 +265,64 @@
         {
           "description": "Swap Terra stablecoins held by the contract to Token Following the swaps, stake the Token acquired to the whitelisted validators",
           "type": "object",
-          "required": ["reinvest"],
+          "required": [
+            "reinvest"
+          ],
           "properties": {
             "reinvest": {
               "type": "object"
             }
           },
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "check_received_coins"
+          ],
+          "properties": {
+            "check_received_coins": {
+              "type": "object",
+              "required": [
+                "snapshot"
+              ],
+              "properties": {
+                "snapshot": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Coin"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": false
         }
       ]
+    },
+    "Coin": {
+      "type": "object",
+      "required": [
+        "amount",
+        "denom"
+      ],
+      "properties": {
+        "amount": {
+          "$ref": "#/definitions/Uint128"
+        },
+        "denom": {
+          "type": "string"
+        }
+      }
     },
     "Cw20ReceiveMsg": {
       "description": "Cw20ReceiveMsg should be de/serialized under `Receive()` variant in a ExecuteMsg",
       "type": "object",
-      "required": ["amount", "msg", "sender"],
+      "required": [
+        "amount",
+        "msg",
+        "sender"
+      ],
       "properties": {
         "amount": {
           "$ref": "#/definitions/Uint128"

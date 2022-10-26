@@ -53,6 +53,16 @@
         }
       ]
     },
+    "reward_coins": {
+      "description": "Reward coins that should be tracked",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
     "symbol": {
       "description": "Symbol of the liquid staking token",
       "type": "string"
