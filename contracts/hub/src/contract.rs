@@ -188,13 +188,19 @@ pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> StdResult<Response
     let contract_version = get_contract_version(deps.storage)?;
 
     match contract_version.contract.as_ref() {
-        "eris-staking-hub" => {
-            if let "1.2.0" = contract_version.version.as_ref() {
+        "eris-hub" => {
+            if let "1.1.0" = contract_version.version.as_ref() {
                 let state = State::default();
                 state.reward_coins.save(deps.storage, &vec![CONTRACT_DENOM.to_string()])?;
             }
+            if let "1.2.0" = contract_version.version.as_ref() {}
         },
-        _ => return Err(StdError::generic_err("wrong contract name")),
+        _ => {
+            return Err(StdError::generic_err(format!(
+                "wrong contract name {}",
+                contract_version.contract
+            )))
+        },
     }
 
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
