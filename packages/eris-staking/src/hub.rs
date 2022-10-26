@@ -26,6 +26,8 @@ pub struct InstantiateMsg {
     pub protocol_fee_contract: String,
     /// Fees that are being applied during reinvest of staking rewards
     pub protocol_reward_fee: Decimal, // "1 is 100%, 0.05 is 5%"
+    /// Reward coins that should be tracked
+    pub reward_coins: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -74,6 +76,8 @@ pub enum ExecuteMsg {
         protocol_fee_contract: Option<String>,
         /// Fees that are being applied during reinvest of staking rewards
         protocol_reward_fee: Option<Decimal>, // "1 is 100%, 0.05 is 5%"
+        /// Reward coins that should be tracked
+        reward_coins: Option<Vec<String>>,
     },
 }
 
@@ -94,6 +98,10 @@ pub enum CallbackMsg {
     // Swap {},
     /// Following the swaps, stake the Token acquired to the whitelisted validators
     Reinvest {},
+
+    CheckReceivedCoins {
+        snapshot: Vec<Coin>,
+    },
 }
 
 impl CallbackMsg {
@@ -161,6 +169,8 @@ pub struct ConfigResponse {
 
     /// Information about applied fees
     pub fee_config: FeeConfig,
+    /// Contains all coins that are being tracked
+    pub reward_coins: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

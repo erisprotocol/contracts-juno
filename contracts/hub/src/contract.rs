@@ -2,7 +2,7 @@ use cosmwasm_std::{
     entry_point, from_binary, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Reply, Response,
     StdError, StdResult,
 };
-use cw2::set_contract_version;
+use cw2::{get_contract_version, set_contract_version};
 use cw20::Cw20ReceiveMsg;
 
 use eris_staking::hub::{
@@ -71,7 +71,14 @@ pub fn execute(deps: DepsMut, env: Env, info: MessageInfo, msg: ExecuteMsg) -> S
         ExecuteMsg::UpdateConfig {
             protocol_fee_contract,
             protocol_reward_fee,
-        } => execute::update_config(deps, info.sender, protocol_fee_contract, protocol_reward_fee),
+            reward_coins,
+        } => execute::update_config(
+            deps,
+            info.sender,
+            protocol_fee_contract,
+            protocol_reward_fee,
+            reward_coins,
+        ),
     }
 }
 
@@ -118,6 +125,9 @@ fn callback(
 
     match callback_msg {
         CallbackMsg::Reinvest {} => execute::reinvest(deps, env),
+        CallbackMsg::CheckReceivedCoins {
+            snapshot,
+        } => execute::callback_received_coins(deps, env, snapshot),
     }
 }
 
@@ -175,13 +185,23 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
 #[entry_point]
 pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> StdResult<Response> {
-    // let contract_version = get_contract_version(deps.storage)?;
+    let contract_version = get_contract_version(deps.storage)?;
+
+    match contract_version.contract.as_ref() {
+        "eris-staking-hub" => {
+            if let "1.2.0" = contract_version.version.as_ref() {
+                let state = State::default();
+                state.reward_coins.save(deps.storage, &vec![CONTRACT_DENOM.to_string()])?;
+            }
+        },
+        _ => return Err(StdError::generic_err("wrong contract name")),
+    }
 
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
 
     Ok(Response::new()
-        // .add_attribute("previous_contract_name", &contract_version.contract)
-        // .add_attribute("previous_contract_version", &contract_version.version)
+        .add_attribute("previous_contract_name", &contract_version.contract)
+        .add_attribute("previous_contract_version", &contract_version.version)
         .add_attribute("new_contract_name", CONTRACT_NAME)
         .add_attribute("new_contract_version", CONTRACT_VERSION))
 }
