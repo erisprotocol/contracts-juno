@@ -5,6 +5,7 @@ use cosmwasm_std::{
 use cw2::{get_contract_version, set_contract_version};
 use cw20::Cw20ReceiveMsg;
 
+use cw_storage_plus::Item;
 use eris_staking::hub::{
     CallbackMsg, ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg, ReceiveMsg,
 };
@@ -71,14 +72,7 @@ pub fn execute(deps: DepsMut, env: Env, info: MessageInfo, msg: ExecuteMsg) -> S
         ExecuteMsg::UpdateConfig {
             protocol_fee_contract,
             protocol_reward_fee,
-            reward_coins,
-        } => execute::update_config(
-            deps,
-            info.sender,
-            protocol_fee_contract,
-            protocol_reward_fee,
-            reward_coins,
-        ),
+        } => execute::update_config(deps, info.sender, protocol_fee_contract, protocol_reward_fee),
     }
 }
 
@@ -125,25 +119,17 @@ fn callback(
 
     match callback_msg {
         CallbackMsg::Reinvest {} => execute::reinvest(deps, env),
-        CallbackMsg::CheckReceivedCoins {
+        CallbackMsg::CheckReceivedCoin {
             snapshot,
-        } => execute::callback_received_coins(deps, env, snapshot),
+        } => execute::callback_received_coin(deps, env, snapshot),
     }
 }
 
 #[entry_point]
-pub fn reply(deps: DepsMut, env: Env, reply: Reply) -> StdResult<Response> {
+pub fn reply(deps: DepsMut, _env: Env, reply: Reply) -> StdResult<Response> {
     match reply.id {
         1 => execute::register_stake_token(deps, unwrap_reply(reply)?),
-        2 => execute::register_received_coins(
-            deps,
-            env,
-            unwrap_reply(reply)?.events,
-            "coin_received",
-            "receiver",
-            "amount",
-        ),
-        id => Err(StdError::generic_err(format!("invalid reply id: {}; must be 1-2", id))),
+        id => Err(StdError::generic_err(format!("invalid reply id: {}; must be 1", id))),
     }
 }
 
@@ -186,15 +172,19 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
 #[entry_point]
 pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> StdResult<Response> {
     let contract_version = get_contract_version(deps.storage)?;
-
+    //
     match contract_version.contract.as_ref() {
         "eris-hub" => {
-            if let "1.1.0" = contract_version.version.as_ref() {
-                let state = State::default();
-                state.reward_coins.save(deps.storage, &vec![CONTRACT_DENOM.to_string()])?;
-            }
             if let "1.2.0" = contract_version.version.as_ref() {}
+
+            if let "1.2.1" = contract_version.version.as_ref() {
+                let item: Item<Vec<String>> = Item::new("reward_coins");
+                if item.may_load(deps.storage).is_ok() {
+                    item.remove(deps.storage)
+                }
+            }
         },
+
         _ => {
             return Err(StdError::generic_err(format!(
                 "wrong contract name {}",

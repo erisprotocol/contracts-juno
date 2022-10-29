@@ -2,20 +2,27 @@ pub mod hub;
 
 mod extensions {
     use cosmwasm_std::{
-        CosmosMsg, Decimal, Decimal256, Fraction, OverflowError, Response, StdError, Uint128,
-        Uint256,
+        CosmosMsg, Decimal, Decimal256, Empty, Env, Fraction, OverflowError, Response, StdError,
+        StdResult, Uint128, Uint256,
     };
     use std::{convert::TryInto, str::FromStr};
-    pub trait CustomResponse<T> {
+
+    use crate::hub::CallbackMsg;
+    pub trait CustomResponse<T>: Sized {
         fn add_optional_message(self, msg: Option<CosmosMsg<T>>) -> Self;
+        fn add_callback_message(self, env: &Env, msg: CallbackMsg) -> StdResult<Self>;
     }
 
-    impl<T> CustomResponse<T> for Response<T> {
-        fn add_optional_message(self, msg: Option<CosmosMsg<T>>) -> Self {
+    impl CustomResponse<Empty> for Response {
+        fn add_optional_message(self, msg: Option<CosmosMsg>) -> Self {
             match msg {
                 Some(msg) => self.add_message(msg),
                 None => self,
             }
+        }
+
+        fn add_callback_message(self, env: &Env, msg: CallbackMsg) -> StdResult<Self> {
+            Ok(self.add_message(msg.into_cosmos_msg(&env.contract.address)?))
         }
     }
 

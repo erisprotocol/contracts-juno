@@ -3,7 +3,7 @@ use std::{collections::HashSet, str::FromStr};
 use cosmwasm_std::{
     Addr, Api, Coin, QuerierWrapper, Reply, StdError, StdResult, SubMsgResponse, Uint128,
 };
-use cw20::{BalanceResponse, Cw20QueryMsg, TokenInfoResponse};
+use cw20::{Cw20QueryMsg, TokenInfoResponse};
 
 use crate::types::Delegation;
 
@@ -20,27 +20,6 @@ pub(crate) fn query_cw20_total_supply(
     let token_info: TokenInfoResponse =
         querier.query_wasm_smart(token_addr, &Cw20QueryMsg::TokenInfo {})?;
     Ok(token_info.total_supply)
-}
-
-/// Query any balance
-pub(crate) fn query_any_balance(
-    querier: &QuerierWrapper,
-    addr: &Addr,
-    denom: &str,
-    cw20prefix: &str,
-) -> StdResult<Uint128> {
-    if denom.starts_with(cw20prefix) {
-        let balance: BalanceResponse = querier.query_wasm_smart(
-            denom,
-            &Cw20QueryMsg::Balance {
-                address: addr.to_string(),
-            },
-        )?;
-
-        Ok(balance.balance)
-    } else {
-        Ok(querier.query_balance(addr, denom)?.amount)
-    }
 }
 
 /// Query the amounts of Token a staker is delegating to a specific validator

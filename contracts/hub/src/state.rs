@@ -28,8 +28,6 @@ pub(crate) struct State<'a> {
     pub unbond_requests: IndexedMap<'a, (u64, &'a Addr), UnbondRequest, UnbondRequestsIndexes<'a>>,
     /// Fee Config
     pub fee_config: Item<'a, FeeConfig>,
-    /// Coins that should be reinvested
-    pub reward_coins: Item<'a, Vec<String>>,
 }
 
 impl Default for State<'static> {
@@ -60,7 +58,6 @@ impl Default for State<'static> {
             previous_batches: IndexedMap::new("previous_batches", pb_indexes),
             unbond_requests: IndexedMap::new("unbond_requests", ubr_indexes),
             fee_config: Item::new("fee_config"),
-            reward_coins: Item::new("reward_coins"),
         }
     }
 }
