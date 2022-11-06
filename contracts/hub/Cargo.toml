@@ -10,6 +10,8 @@ repository = "https://github.com/erisprotocol/liquid-staking-contracts"
 crate-type = ["cdylib", "rlib"]
 
 [features]
+# default = ["testnet"]
+# testnet = []
 backtraces = ["cosmwasm-std/backtraces"]
 
 [dependencies]

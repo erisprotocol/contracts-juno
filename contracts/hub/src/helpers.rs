@@ -104,12 +104,13 @@ pub fn dedupe(v: &mut Vec<String>) {
 }
 
 /// Dedupes and checks a list of received addrs
-pub fn dedupe_check_received_addrs(validators: &mut Vec<String>, api: &dyn Api) -> StdResult<()> {
+pub fn dedupe_check_received_addrs(validators: &mut Vec<String>, _api: &dyn Api) -> StdResult<()> {
     dedupe(validators);
 
-    for validator in validators {
-        api.addr_validate(validator.as_str())?;
-    }
+    // on juno validators can't be validated (junoveloper)
+    // for validator in validators {
+    //     api.addr_validate(validator.as_str())?;
+    // }
 
     Ok(())
 }

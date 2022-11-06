@@ -13,8 +13,7 @@ use eris_staking::hub::{
 
 use crate::constants::{get_reward_fee_cap, CONTRACT_DENOM};
 use crate::helpers::{
-    addr_validate_to_lower, dedupe_check_received_addrs, query_cw20_total_supply, query_delegation,
-    query_delegations,
+    dedupe_check_received_addrs, query_cw20_total_supply, query_delegation, query_delegations,
 };
 use crate::math::{
     compute_mint_amount, compute_redelegations_for_rebalancing, compute_redelegations_for_removal,
@@ -606,7 +605,6 @@ pub fn add_validator(deps: DepsMut, sender: Addr, validator: String) -> StdResul
     let state = State::default();
 
     state.assert_owner(deps.storage, &sender)?;
-    addr_validate_to_lower(deps.api, validator.as_str())?;
 
     state.validators.update(deps.storage, |mut validators| {
         if validators.contains(&validator) {
