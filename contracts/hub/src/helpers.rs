@@ -103,18 +103,6 @@ pub fn dedupe(v: &mut Vec<String>) {
     v.retain(|x| set.insert(x.clone()));
 }
 
-/// Dedupes and checks a list of received addrs
-pub fn dedupe_check_received_addrs(validators: &mut Vec<String>, _api: &dyn Api) -> StdResult<()> {
-    dedupe(validators);
-
-    // on juno validators can't be validated (junoveloper)
-    // for validator in validators {
-    //     api.addr_validate(validator.as_str())?;
-    // }
-
-    Ok(())
-}
-
 /// Returns a lowercased, validated address upon success. Otherwise returns [`Err`]
 /// ## Params
 /// * **api** is an object of type [`Api`]

@@ -12,9 +12,7 @@ use eris_staking::hub::{
 };
 
 use crate::constants::{get_reward_fee_cap, CONTRACT_DENOM};
-use crate::helpers::{
-    dedupe_check_received_addrs, query_cw20_total_supply, query_delegation, query_delegations,
-};
+use crate::helpers::{dedupe, query_cw20_total_supply, query_delegation, query_delegations};
 use crate::math::{
     compute_mint_amount, compute_redelegations_for_rebalancing, compute_redelegations_for_removal,
     compute_unbond_amount, compute_undelegations, mark_reconciled_batches, reconcile_batches,
@@ -43,8 +41,7 @@ pub fn instantiate(deps: DepsMut, env: Env, msg: InstantiateMsg) -> StdResult<Re
     state.unbond_period.save(deps.storage, &msg.unbond_period)?;
 
     let mut validators = msg.validators;
-    dedupe_check_received_addrs(&mut validators, deps.api)
-        .map_err(|_| StdError::generic_err("invalid validators"))?;
+    dedupe(&mut validators);
 
     state.validators.save(deps.storage, &validators)?;
     state.unlocked_coins.save(deps.storage, &vec![])?;
@@ -293,7 +290,7 @@ pub fn callback_received_coin(deps: DepsMut, env: Env, snapshot: Coin) -> StdRes
     let mut received_coins = Coins(vec![]);
     let mut event = Event::new("erishub/callback_received_coins");
     let current_balance =
-        deps.querier.query_balance(&env.contract.address, snapshot.denom.to_string())?.amount;
+        deps.querier.query_balance(env.contract.address, snapshot.denom.to_string())?.amount;
 
     if current_balance > snapshot.amount {
         let amount = current_balance.checked_sub(snapshot.amount)?;
